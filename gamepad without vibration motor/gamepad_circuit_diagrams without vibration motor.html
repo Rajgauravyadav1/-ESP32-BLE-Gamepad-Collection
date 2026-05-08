@@ -1,0 +1,610 @@
+
+<style>
+  body{margin:0}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;padding:14px 16px 0}
+  .tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:transparent;transition:all .15s}
+  .tab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent}
+  .panel{display:none}.panel.active{display:block}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 20px 6px}
+  .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary)}
+  .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+</style>
+
+<div class="tabs">
+  <button class="tab active" onclick="show(0)">4 Btn + Joystick</button>
+  <button class="tab" onclick="show(1)">8 Btn + Joystick</button>
+  <button class="tab" onclick="show(2)">8 Btn Only</button>
+  <button class="tab" onclick="show(3)">Triggers + Joystick</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DIAGRAM 1 — 4 Buttons + 1 Joystick
+═══════════════════════════════════════════════════ -->
+<div class="panel active" id="p0">
+<div class="legend">
+  <div class="li"><div class="ld" style="background:#378ADD"></div>3.3V power</div>
+  <div class="li"><div class="ld" style="background:#5F5E5A"></div>GND</div>
+  <div class="li"><div class="ld" style="background:#993C1D"></div>Button signal</div>
+  <div class="li"><div class="ld" style="background:#0F6E56"></div>Analog signal</div>
+</div>
+<svg width="100%" viewBox="0 0 680 440" role="img">
+  <title>4 buttons + 1 joystick wiring diagram</title>
+  <desc>ESP32 center, 4 buttons on left connected to GPIO 12/13/14/27, KY-023 joystick on right connected to GPIO 34/35</desc>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- ── ESP32 board ── -->
+  <g class="c-gray">
+    <rect x="250" y="40" width="180" height="360" rx="10" stroke-width="1"/>
+    <text class="th" x="340" y="68" text-anchor="middle" dominant-baseline="central">ESP32</text>
+    <text class="ts" x="340" y="88" text-anchor="middle" dominant-baseline="central">DevKit v1</text>
+  </g>
+
+  <!-- Left pin row labels (right-aligned to x=242) -->
+  <text class="ts" x="242" y="130" text-anchor="end" dominant-baseline="central">3.3V</text>
+  <text class="ts" x="242" y="160" text-anchor="end" dominant-baseline="central">GND</text>
+  <text class="ts" x="242" y="200" text-anchor="end" dominant-baseline="central">GPIO 12</text>
+  <text class="ts" x="242" y="230" text-anchor="end" dominant-baseline="central">GPIO 13</text>
+  <text class="ts" x="242" y="260" text-anchor="end" dominant-baseline="central">GPIO 14</text>
+  <text class="ts" x="242" y="290" text-anchor="end" dominant-baseline="central">GPIO 27</text>
+
+  <!-- Left pin dots -->
+  <circle cx="250" cy="130" r="4" fill="#378ADD"/>
+  <circle cx="250" cy="160" r="4" fill="#5F5E5A"/>
+  <circle cx="250" cy="200" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="230" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="260" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="290" r="4" fill="#993C1D"/>
+
+  <!-- Right pin row labels -->
+  <text class="ts" x="438" y="200" text-anchor="start" dominant-baseline="central">GPIO 34</text>
+  <text class="ts" x="438" y="230" text-anchor="start" dominant-baseline="central">GPIO 35</text>
+  <text class="ts" x="438" y="310" text-anchor="start" dominant-baseline="central">GND</text>
+  <text class="ts" x="438" y="340" text-anchor="start" dominant-baseline="central">3.3V</text>
+
+  <!-- Right pin dots -->
+  <circle cx="430" cy="200" r="4" fill="#0F6E56"/>
+  <circle cx="430" cy="230" r="4" fill="#0F6E56"/>
+  <circle cx="430" cy="310" r="4" fill="#5F5E5A"/>
+  <circle cx="430" cy="340" r="4" fill="#378ADD"/>
+
+  <!-- ── 4 Buttons (left side, stacked) ── -->
+  <!-- BTN A -->
+  <g class="c-coral">
+    <rect x="60" y="188" width="80" height="26" rx="5" stroke-width="0.5"/>
+    <text class="th" x="100" y="201" text-anchor="middle" dominant-baseline="central">BTN A</text>
+  </g>
+  <!-- BTN B -->
+  <g class="c-coral">
+    <rect x="60" y="218" width="80" height="26" rx="5" stroke-width="0.5"/>
+    <text class="th" x="100" y="231" text-anchor="middle" dominant-baseline="central">BTN B</text>
+  </g>
+  <!-- BTN X -->
+  <g class="c-coral">
+    <rect x="60" y="248" width="80" height="26" rx="5" stroke-width="0.5"/>
+    <text class="th" x="100" y="261" text-anchor="middle" dominant-baseline="central">BTN X</text>
+  </g>
+  <!-- BTN Y -->
+  <g class="c-coral">
+    <rect x="60" y="278" width="80" height="26" rx="5" stroke-width="0.5"/>
+    <text class="th" x="100" y="291" text-anchor="middle" dominant-baseline="central">BTN Y</text>
+  </g>
+
+  <!-- Signal wires: button right edge → ESP32 left pin -->
+  <line x1="140" y1="201" x2="250" y2="200" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="140" y1="231" x2="250" y2="230" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="140" y1="261" x2="250" y2="260" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="140" y1="291" x2="250" y2="290" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- GND bus: vertical rail at x=44, connects all button left pins to ESP32 GND -->
+  <line x1="44" y1="195" x2="44" y2="298" stroke="#5F5E5A" stroke-width="2"/>
+  <line x1="44" y1="201" x2="60" y2="201" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="44" y1="231" x2="60" y2="231" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="44" y1="261" x2="60" y2="261" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="44" y1="291" x2="60" y2="291" stroke="#5F5E5A" stroke-width="1.5"/>
+  <!-- Rail down to GND row then right to ESP32 -->
+  <path d="M44 298 L44 370 L250 370 L250 160" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text class="ts" x="148" y="380" text-anchor="middle" dominant-baseline="central">common GND</text>
+
+  <!-- VCC label for buttons (not needed – pull-up, no VCC wire) -->
+  <text class="ts" x="100" y="176" text-anchor="middle" dominant-baseline="central">INPUT_PULLUP</text>
+  <text class="ts" x="100" y="188" text-anchor="middle" dominant-baseline="central">(no VCC needed)</text>
+
+  <!-- ── KY-023 Joystick (right side) ── -->
+  <g class="c-teal">
+    <rect x="540" y="180" width="110" height="110" rx="8" stroke-width="0.5"/>
+    <text class="th" x="595" y="208" text-anchor="middle" dominant-baseline="central">KY-023</text>
+    <text class="ts" x="595" y="226" text-anchor="middle" dominant-baseline="central">Joystick</text>
+  </g>
+
+  <!-- Joy pin labels inside box -->
+  <text class="ts" x="556" y="248" dominant-baseline="central">GND</text>
+  <text class="ts" x="556" y="265" dominant-baseline="central">VCC</text>
+  <text class="ts" x="556" y="282" dominant-baseline="central">VRX</text>
+
+  <!-- Joy pin labels offset for VRY - need to go below box -->
+  <text class="ts" x="556" y="270" dominant-baseline="central"></text>
+
+  <!-- Joy pin dots on left edge of joystick box -->
+  <circle cx="540" cy="248" r="4" fill="#5F5E5A"/>
+  <circle cx="540" cy="264" r="4" fill="#378ADD"/>
+  <circle cx="540" cy="280" r="4" fill="#0F6E56"/>
+
+  <!-- VRY pin - comes out bottom -->
+  <circle cx="595" cy="290" r="4" fill="#0F6E56"/>
+  <text class="ts" x="610" y="310" dominant-baseline="central">VRY</text>
+
+  <!-- Wires: Joy left pins → ESP32 right pins -->
+  <!-- VRX → GPIO34: x1=540,y=280 → x2=430,y=200 — route around joystick box -->
+  <path d="M540 280 L510 280 L510 200 L430 200" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ah)"/>
+  <!-- VRY → GPIO35: comes from bottom of joy box -->
+  <path d="M595 290 L595 320 L510 320 L510 230 L430 230" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- Joy GND → ESP32 GND (right side pin 310) -->
+  <path d="M540 248 L520 248 L520 310 L430 310" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ah)"/>
+  <!-- Joy VCC → ESP32 3.3V (right side pin 340) -->
+  <path d="M540 264 L525 264 L525 340 L430 340" fill="none" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#ah)"/>
+
+  <!-- Divider line between sections of ESP32 -->
+  <line x1="258" y1="175" x2="422" y2="175" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <text class="ts" x="340" y="168" text-anchor="middle" dominant-baseline="central">analog pins</text>
+  <text class="ts" x="340" y="182" text-anchor="middle" dominant-baseline="central">below</text>
+
+  <!-- Note box -->
+  <rect x="44" y="400" width="592" height="28" rx="5" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text class="ts" x="340" y="414" text-anchor="middle" dominant-baseline="central">Buttons: one leg to GPIO, other leg to GND — INPUT_PULLUP active. Joystick VRX/VRY: 0–3.3V on input-only GPIO 34, 35</text>
+</svg>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DIAGRAM 2 — 8 Buttons + Joystick
+═══════════════════════════════════════════════════ -->
+<div class="panel" id="p1">
+<div class="legend">
+  <div class="li"><div class="ld" style="background:#378ADD"></div>3.3V power</div>
+  <div class="li"><div class="ld" style="background:#5F5E5A"></div>GND</div>
+  <div class="li"><div class="ld" style="background:#993C1D"></div>Face/shoulder buttons</div>
+  <div class="li"><div class="ld" style="background:#534AB7"></div>Menu + joy-click</div>
+  <div class="li"><div class="ld" style="background:#0F6E56"></div>Analog joystick</div>
+</div>
+<svg width="100%" viewBox="0 0 680 520" role="img">
+  <title>8 buttons + joystick wiring diagram</title>
+  <desc>ESP32 center, 8 buttons on left (A/B/X/Y on GPIO 12-27, LB/RB on 25-26, START/SELECT on 32-33), joystick on right GPIO 34/35 with click on GPIO 15</desc>
+  <defs>
+    <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- ── ESP32 board ── -->
+  <g class="c-gray">
+    <rect x="250" y="30" width="180" height="440" rx="10" stroke-width="1"/>
+    <text class="th" x="340" y="58" text-anchor="middle" dominant-baseline="central">ESP32 DevKit v1</text>
+  </g>
+
+  <!-- Left pins — 8 GPIOs + GND -->
+  <text class="ts" x="242" y="120" text-anchor="end" dominant-baseline="central">GND</text>
+  <text class="ts" x="242" y="155" text-anchor="end" dominant-baseline="central">GPIO 12 (A)</text>
+  <text class="ts" x="242" y="185" text-anchor="end" dominant-baseline="central">GPIO 13 (B)</text>
+  <text class="ts" x="242" y="215" text-anchor="end" dominant-baseline="central">GPIO 14 (X)</text>
+  <text class="ts" x="242" y="245" text-anchor="end" dominant-baseline="central">GPIO 27 (Y)</text>
+  <text class="ts" x="242" y="285" text-anchor="end" dominant-baseline="central">GPIO 26 (LB)</text>
+  <text class="ts" x="242" y="315" text-anchor="end" dominant-baseline="central">GPIO 25 (RB)</text>
+  <text class="ts" x="242" y="355" text-anchor="end" dominant-baseline="central">GPIO 33 (ST)</text>
+  <text class="ts" x="242" y="385" text-anchor="end" dominant-baseline="central">GPIO 32 (SE)</text>
+  <text class="ts" x="242" y="420" text-anchor="end" dominant-baseline="central">GPIO 15 (J↓)</text>
+
+  <circle cx="250" cy="120" r="4" fill="#5F5E5A"/>
+  <circle cx="250" cy="155" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="185" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="215" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="245" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="285" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="315" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="355" r="4" fill="#534AB7"/>
+  <circle cx="250" cy="385" r="4" fill="#534AB7"/>
+  <circle cx="250" cy="420" r="4" fill="#534AB7"/>
+
+  <!-- Right pins -->
+  <text class="ts" x="438" y="155" text-anchor="start" dominant-baseline="central">GPIO 34 (JX)</text>
+  <text class="ts" x="438" y="185" text-anchor="start" dominant-baseline="central">GPIO 35 (JY)</text>
+  <text class="ts" x="438" y="350" text-anchor="start" dominant-baseline="central">GND</text>
+  <text class="ts" x="438" y="385" text-anchor="start" dominant-baseline="central">3.3V</text>
+
+  <circle cx="430" cy="155" r="4" fill="#0F6E56"/>
+  <circle cx="430" cy="185" r="4" fill="#0F6E56"/>
+  <circle cx="430" cy="350" r="4" fill="#5F5E5A"/>
+  <circle cx="430" cy="385" r="4" fill="#378ADD"/>
+
+  <!-- ── Buttons — LEFT side ── -->
+  <!-- Face buttons group label -->
+  <text class="ts" x="100" y="100" text-anchor="middle" dominant-baseline="central">Face buttons</text>
+  <g class="c-coral">
+    <rect x="48" y="143" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="155" text-anchor="middle" dominant-baseline="central">BTN A</text>
+  </g>
+  <g class="c-coral">
+    <rect x="48" y="171" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="183" text-anchor="middle" dominant-baseline="central">BTN B</text>
+  </g>
+  <g class="c-coral">
+    <rect x="48" y="203" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="215" text-anchor="middle" dominant-baseline="central">BTN X</text>
+  </g>
+  <g class="c-coral">
+    <rect x="48" y="233" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="245" text-anchor="middle" dominant-baseline="central">BTN Y</text>
+  </g>
+
+  <!-- Shoulder buttons -->
+  <text class="ts" x="100" y="268" text-anchor="middle" dominant-baseline="central">Shoulder</text>
+  <g class="c-amber">
+    <rect x="48" y="273" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="285" text-anchor="middle" dominant-baseline="central">BTN LB</text>
+  </g>
+  <g class="c-amber">
+    <rect x="48" y="303" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="315" text-anchor="middle" dominant-baseline="central">BTN RB</text>
+  </g>
+
+  <!-- Menu + Joy click -->
+  <text class="ts" x="100" y="338" text-anchor="middle" dominant-baseline="central">Menu / system</text>
+  <g class="c-purple">
+    <rect x="48" y="343" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="355" text-anchor="middle" dominant-baseline="central">START</text>
+  </g>
+  <g class="c-purple">
+    <rect x="48" y="373" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="385" text-anchor="middle" dominant-baseline="central">SELECT</text>
+  </g>
+  <g class="c-purple">
+    <rect x="48" y="408" width="76" height="24" rx="4" stroke-width="0.5"/>
+    <text class="ts" x="86" y="420" text-anchor="middle" dominant-baseline="central">Joy click</text>
+  </g>
+
+  <!-- Signal wires left → ESP32 -->
+  <line x1="124" y1="155" x2="250" y2="155" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="183" x2="250" y2="185" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="215" x2="250" y2="215" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="245" x2="250" y2="245" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="285" x2="250" y2="285" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="315" x2="250" y2="315" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="355" x2="250" y2="355" stroke="#534AB7" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="385" x2="250" y2="385" stroke="#534AB7" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <line x1="124" y1="420" x2="250" y2="420" stroke="#534AB7" stroke-width="1.5" marker-end="url(#ah1)"/>
+
+  <!-- GND rail left -->
+  <line x1="32" y1="143" x2="32" y2="432" stroke="#5F5E5A" stroke-width="2"/>
+  <line x1="32" y1="155" x2="48" y2="155" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="183" x2="48" y2="183" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="215" x2="48" y2="215" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="245" x2="48" y2="245" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="285" x2="48" y2="285" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="315" x2="48" y2="315" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="355" x2="48" y2="355" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="385" x2="48" y2="385" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="32" y1="420" x2="48" y2="420" stroke="#5F5E5A" stroke-width="1.5"/>
+  <!-- GND rail connects to ESP32 GND pin -->
+  <path d="M32 432 L32 460 L340 460 L340 470" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <path d="M250 120 L200 120 L200 460" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+  <!-- ── Joystick right side ── -->
+  <g class="c-teal">
+    <rect x="540" y="120" width="110" height="130" rx="8" stroke-width="0.5"/>
+    <text class="th" x="595" y="150" text-anchor="middle" dominant-baseline="central">KY-023</text>
+    <text class="ts" x="595" y="168" text-anchor="middle" dominant-baseline="central">+ click</text>
+  </g>
+
+  <!-- Joy pin dots on left edge -->
+  <circle cx="540" cy="200" r="4" fill="#5F5E5A"/>
+  <circle cx="540" cy="220" r="4" fill="#378ADD"/>
+  <circle cx="540" cy="190" r="4" fill="#0F6E56"/>
+  <circle cx="540" cy="210" r="4" fill="#0F6E56"/>
+
+  <!-- Actually draw pin labels clearly outside the box -->
+  <text class="ts" x="538" y="192" text-anchor="end" dominant-baseline="central">VRX</text>
+  <text class="ts" x="538" y="212" text-anchor="end" dominant-baseline="central">VRY</text>
+  <text class="ts" x="538" y="232" text-anchor="end" dominant-baseline="central">GND</text>
+
+  <!-- Joy VCC, GND bottom -->
+  <circle cx="565" cy="250" r="4" fill="#378ADD"/>
+  <circle cx="595" cy="250" r="4" fill="#5F5E5A"/>
+  <text class="ts" x="555" y="268" text-anchor="middle" dominant-baseline="central">VCC</text>
+  <text class="ts" x="595" y="268" text-anchor="middle" dominant-baseline="central">GND</text>
+
+  <!-- Joy SW (click) on right edge -->
+  <circle cx="650" cy="185" r="4" fill="#534AB7"/>
+  <text class="ts" x="652" y="174" text-anchor="start" dominant-baseline="central">SW (click)</text>
+
+  <!-- Wires joy → ESP32 -->
+  <!-- VRX → GPIO34 -->
+  <path d="M540 190 L505 190 L505 155 L430 155" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <!-- VRY → GPIO35 -->
+  <path d="M540 210 L510 210 L510 185 L430 185" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ah1)"/>
+  <!-- Joy GND → ESP32 GND right -->
+  <path d="M595 250 L595 280 L510 280 L510 350 L430 350" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ah1)"/>
+  <!-- Joy VCC → ESP32 3.3V right -->
+  <path d="M565 250 L565 300 L515 300 L515 385 L430 385" fill="none" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#ah1)"/>
+  <!-- Joy SW click → GPIO15 left side -->
+  <path d="M650 185 L660 185 L660 420 L124 420" fill="none" stroke="#534AB7" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#ah1)"/>
+
+  <!-- Note -->
+  <rect x="32" y="476" width="616" height="28" rx="5" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text class="ts" x="340" y="490" text-anchor="middle" dominant-baseline="central">All buttons wired button → GPIO (signal) + button → GND. Set JOY_SW_PIN = -1 in code to disable joystick click.</text>
+</svg>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DIAGRAM 3 — 8 Buttons ONLY
+═══════════════════════════════════════════════════ -->
+<div class="panel" id="p2">
+<div class="legend">
+  <div class="li"><div class="ld" style="background:#5F5E5A"></div>GND</div>
+  <div class="li"><div class="ld" style="background:#993C1D"></div>Button signal</div>
+  <div class="li"><div class="ld" style="background:#534AB7"></div>Menu buttons</div>
+</div>
+<svg width="100%" viewBox="0 0 680 460" role="img">
+  <title>8 buttons only — no joystick</title>
+  <desc>ESP32 center with 8 push buttons, no analog axes. Minimal BLE packet size.</desc>
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- ── ESP32 (center, narrower since no right-side components) ── -->
+  <g class="c-gray">
+    <rect x="270" y="40" width="140" height="370" rx="10" stroke-width="1"/>
+    <text class="th" x="340" y="66" text-anchor="middle" dominant-baseline="central">ESP32</text>
+    <text class="ts" x="340" y="84" text-anchor="middle" dominant-baseline="central">DevKit v1</text>
+    <text class="ts" x="340" y="100" text-anchor="middle" dominant-baseline="central">8 btn — no axes</text>
+  </g>
+
+  <!-- Left pins -->
+  <text class="ts" x="262" y="135" text-anchor="end" dominant-baseline="central">GND</text>
+  <text class="ts" x="262" y="165" text-anchor="end" dominant-baseline="central">GPIO 12 (A)</text>
+  <text class="ts" x="262" y="195" text-anchor="end" dominant-baseline="central">GPIO 13 (B)</text>
+  <text class="ts" x="262" y="225" text-anchor="end" dominant-baseline="central">GPIO 14 (X)</text>
+  <text class="ts" x="262" y="255" text-anchor="end" dominant-baseline="central">GPIO 27 (Y)</text>
+  <text class="ts" x="262" y="295" text-anchor="end" dominant-baseline="central">GPIO 26 (LB)</text>
+  <text class="ts" x="262" y="325" text-anchor="end" dominant-baseline="central">GPIO 25 (RB)</text>
+  <text class="ts" x="262" y="360" text-anchor="end" dominant-baseline="central">GPIO 33 (ST)</text>
+  <text class="ts" x="262" y="390" text-anchor="end" dominant-baseline="central">GPIO 32 (SE)</text>
+
+  <circle cx="270" cy="135" r="4" fill="#5F5E5A"/>
+  <circle cx="270" cy="165" r="4" fill="#993C1D"/>
+  <circle cx="270" cy="195" r="4" fill="#993C1D"/>
+  <circle cx="270" cy="225" r="4" fill="#993C1D"/>
+  <circle cx="270" cy="255" r="4" fill="#993C1D"/>
+  <circle cx="270" cy="295" r="4" fill="#993C1D"/>
+  <circle cx="270" cy="325" r="4" fill="#993C1D"/>
+  <circle cx="270" cy="360" r="4" fill="#534AB7"/>
+  <circle cx="270" cy="390" r="4" fill="#534AB7"/>
+
+  <!-- ── Buttons — all on LEFT side ── -->
+  <text class="ts" x="120" y="116" text-anchor="middle" dominant-baseline="central">Face</text>
+  <g class="c-coral"><rect x="68" y="153" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="165" text-anchor="middle" dominant-baseline="central">BTN A</text></g>
+  <g class="c-coral"><rect x="68" y="183" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="195" text-anchor="middle" dominant-baseline="central">BTN B</text></g>
+  <g class="c-coral"><rect x="68" y="213" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="225" text-anchor="middle" dominant-baseline="central">BTN X</text></g>
+  <g class="c-coral"><rect x="68" y="243" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="255" text-anchor="middle" dominant-baseline="central">BTN Y</text></g>
+
+  <text class="ts" x="120" y="276" text-anchor="middle" dominant-baseline="central">Shoulder</text>
+  <g class="c-amber"><rect x="68" y="283" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="295" text-anchor="middle" dominant-baseline="central">BTN LB</text></g>
+  <g class="c-amber"><rect x="68" y="313" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="325" text-anchor="middle" dominant-baseline="central">BTN RB</text></g>
+
+  <text class="ts" x="120" y="344" text-anchor="middle" dominant-baseline="central">Menu</text>
+  <g class="c-purple"><rect x="68" y="348" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="360" text-anchor="middle" dominant-baseline="central">START</text></g>
+  <g class="c-purple"><rect x="68" y="378" width="76" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="106" y="390" text-anchor="middle" dominant-baseline="central">SELECT</text></g>
+
+  <!-- Signal wires -->
+  <line x1="144" y1="165" x2="270" y2="165" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="195" x2="270" y2="195" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="225" x2="270" y2="225" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="255" x2="270" y2="255" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="295" x2="270" y2="295" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="325" x2="270" y2="325" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="360" x2="270" y2="360" stroke="#534AB7" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <line x1="144" y1="390" x2="270" y2="390" stroke="#534AB7" stroke-width="1.5" marker-end="url(#ah2)"/>
+
+  <!-- GND rail -->
+  <line x1="48" y1="153" x2="48" y2="402" stroke="#5F5E5A" stroke-width="2"/>
+  <line x1="48" y1="165" x2="68" y2="165" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="195" x2="68" y2="195" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="225" x2="68" y2="225" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="255" x2="68" y2="255" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="295" x2="68" y2="295" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="325" x2="68" y2="325" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="360" x2="68" y2="360" stroke="#5F5E5A" stroke-width="1.5"/>
+  <line x1="48" y1="390" x2="68" y2="390" stroke="#5F5E5A" stroke-width="1.5"/>
+  <path d="M48 402 L48 420 L270 420 L270 135" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+  <!-- Right side: BLE info box -->
+  <g class="c-blue">
+    <rect x="432" y="140" width="210" height="100" rx="8" stroke-width="0.5"/>
+    <text class="th" x="537" y="168" text-anchor="middle" dominant-baseline="central">BLE packet info</text>
+    <text class="ts" x="537" y="190" text-anchor="middle" dominant-baseline="central">Axes disabled in code</text>
+    <text class="ts" x="537" y="208" text-anchor="middle" dominant-baseline="central">Smallest HID report</text>
+    <text class="ts" x="537" y="226" text-anchor="middle" dominant-baseline="central">Ideal: media remote</text>
+  </g>
+
+  <!-- Right side: pin usage note -->
+  <g class="c-green">
+    <rect x="432" y="260" width="210" height="80" rx="8" stroke-width="0.5"/>
+    <text class="th" x="537" y="285" text-anchor="middle" dominant-baseline="central">GPIO usage</text>
+    <text class="ts" x="537" y="305" text-anchor="middle" dominant-baseline="central">Only 8 digital pins used</text>
+    <text class="ts" x="537" y="323" text-anchor="middle" dominant-baseline="central">34, 35, ADCs are free</text>
+  </g>
+
+  <!-- Note -->
+  <rect x="48" y="430" width="584" height="22" rx="4" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text class="ts" x="340" y="441" text-anchor="middle" dominant-baseline="central">Report sent only on state change — very efficient for buzzers and media remotes</text>
+</svg>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DIAGRAM 4 — 2 Analog Triggers + Joystick
+═══════════════════════════════════════════════════ -->
+<div class="panel" id="p3">
+<div class="legend">
+  <div class="li"><div class="ld" style="background:#378ADD"></div>3.3V power</div>
+  <div class="li"><div class="ld" style="background:#5F5E5A"></div>GND</div>
+  <div class="li"><div class="ld" style="background:#993C1D"></div>Button signal</div>
+  <div class="li"><div class="ld" style="background:#0F6E56"></div>Analog joystick</div>
+  <div class="li"><div class="ld" style="background:#854F0B"></div>Analog trigger</div>
+</div>
+<svg width="100%" viewBox="0 0 680 500" role="img">
+  <title>2 analog triggers + joystick wiring diagram</title>
+  <desc>ESP32 center, 2 potentiometer triggers on GPIO 32/33, KY-023 joystick on GPIO 34/35, 4 face buttons on GPIO 12/13/14/27</desc>
+  <defs>
+    <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- ── ESP32 ── -->
+  <g class="c-gray">
+    <rect x="250" y="30" width="180" height="420" rx="10" stroke-width="1"/>
+    <text class="th" x="340" y="58" text-anchor="middle" dominant-baseline="central">ESP32 DevKit v1</text>
+    <text class="ts" x="340" y="76" text-anchor="middle" dominant-baseline="central">Triggers + Joystick</text>
+  </g>
+
+  <!-- Left pins -->
+  <text class="ts" x="242" y="115" text-anchor="end" dominant-baseline="central">3.3V</text>
+  <text class="ts" x="242" y="145" text-anchor="end" dominant-baseline="central">GND</text>
+  <text class="ts" x="242" y="185" text-anchor="end" dominant-baseline="central">GPIO 32 (LT)</text>
+  <text class="ts" x="242" y="215" text-anchor="end" dominant-baseline="central">GPIO 33 (RT)</text>
+  <text class="ts" x="242" y="265" text-anchor="end" dominant-baseline="central">GPIO 12 (A)</text>
+  <text class="ts" x="242" y="295" text-anchor="end" dominant-baseline="central">GPIO 13 (B)</text>
+  <text class="ts" x="242" y="325" text-anchor="end" dominant-baseline="central">GPIO 14 (X)</text>
+  <text class="ts" x="242" y="355" text-anchor="end" dominant-baseline="central">GPIO 27 (Y)</text>
+
+  <circle cx="250" cy="115" r="4" fill="#378ADD"/>
+  <circle cx="250" cy="145" r="4" fill="#5F5E5A"/>
+  <circle cx="250" cy="185" r="4" fill="#854F0B"/>
+  <circle cx="250" cy="215" r="4" fill="#854F0B"/>
+  <circle cx="250" cy="265" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="295" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="325" r="4" fill="#993C1D"/>
+  <circle cx="250" cy="355" r="4" fill="#993C1D"/>
+
+  <!-- Right pins -->
+  <text class="ts" x="438" y="185" text-anchor="start" dominant-baseline="central">GPIO 34 (JX)</text>
+  <text class="ts" x="438" y="215" text-anchor="start" dominant-baseline="central">GPIO 35 (JY)</text>
+  <text class="ts" x="438" y="310" text-anchor="start" dominant-baseline="central">GND</text>
+  <text class="ts" x="438" y="340" text-anchor="start" dominant-baseline="central">3.3V</text>
+
+  <circle cx="430" cy="185" r="4" fill="#0F6E56"/>
+  <circle cx="430" cy="215" r="4" fill="#0F6E56"/>
+  <circle cx="430" cy="310" r="4" fill="#5F5E5A"/>
+  <circle cx="430" cy="340" r="4" fill="#378ADD"/>
+
+  <!-- ── Analog Triggers — LEFT ── -->
+  <text class="ts" x="100" y="110" text-anchor="middle" dominant-baseline="central">Analog triggers (10kΩ pot)</text>
+
+  <!-- LT potentiometer symbol -->
+  <g class="c-amber">
+    <rect x="44" y="160" width="90" height="50" rx="6" stroke-width="0.5"/>
+    <text class="th" x="89" y="180" text-anchor="middle" dominant-baseline="central">LT trigger</text>
+    <text class="ts" x="89" y="198" text-anchor="middle" dominant-baseline="central">10kΩ pot</text>
+  </g>
+  <!-- pot pin labels -->
+  <text class="ts" x="42" y="168" text-anchor="end" dominant-baseline="central">VCC</text>
+  <text class="ts" x="42" y="185" text-anchor="end" dominant-baseline="central">Wiper</text>
+  <text class="ts" x="42" y="202" text-anchor="end" dominant-baseline="central">GND</text>
+  <circle cx="44" cy="168" r="3" fill="#378ADD"/>
+  <circle cx="44" cy="185" r="3" fill="#854F0B"/>
+  <circle cx="44" cy="202" r="3" fill="#5F5E5A"/>
+
+  <!-- RT potentiometer -->
+  <g class="c-amber">
+    <rect x="44" y="222" width="90" height="50" rx="6" stroke-width="0.5"/>
+    <text class="th" x="89" y="242" text-anchor="middle" dominant-baseline="central">RT trigger</text>
+    <text class="ts" x="89" y="260" text-anchor="middle" dominant-baseline="central">10kΩ pot</text>
+  </g>
+  <text class="ts" x="42" y="230" text-anchor="end" dominant-baseline="central">VCC</text>
+  <text class="ts" x="42" y="247" text-anchor="end" dominant-baseline="central">Wiper</text>
+  <text class="ts" x="42" y="264" text-anchor="end" dominant-baseline="central">GND</text>
+  <circle cx="44" cy="230" r="3" fill="#378ADD"/>
+  <circle cx="44" cy="247" r="3" fill="#854F0B"/>
+  <circle cx="44" cy="264" r="3" fill="#5F5E5A"/>
+
+  <!-- Wiper wires → GPIO 32 / 33 -->
+  <path d="M44 185 L32 185 L32 185" fill="none" stroke="none"/>
+  <line x1="44" y1="185" x2="20" y2="185" stroke="#854F0B" stroke-width="1.5"/>
+  <path d="M20 185 L20 185 L20 185" fill="none" stroke="none"/>
+  <path d="M20 185 L20 137 L250 137 L250 185" fill="none" stroke="#854F0B" stroke-width="1.5" marker-end="url(#ah3)"/>
+  <path d="M44 247 L18 247 L18 140 L240 140" fill="none" stroke="#854F0B" stroke-width="1" stroke-dasharray="5 2"/>
+  <path d="M240 140 L240 215 L250 215" fill="none" stroke="#854F0B" stroke-width="1" marker-end="url(#ah3)"/>
+
+  <!-- VCC for pots → 3.3V -->
+  <path d="M44 168 L14 168 L14 115 L250 115" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-dasharray="4 2" marker-end="url(#ah3)"/>
+
+  <!-- GND for pots → GND rail -->
+  <line x1="44" y1="202" x2="10" y2="202" stroke="#5F5E5A" stroke-width="1.2"/>
+  <line x1="44" y1="264" x2="10" y2="264" stroke="#5F5E5A" stroke-width="1.2"/>
+  <line x1="10" y1="202" x2="10" y2="264" stroke="#5F5E5A" stroke-width="2"/>
+  <path d="M10 264 L10 430 L250 430 L250 145" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+  <!-- ── 4 Face Buttons — LEFT ── -->
+  <text class="ts" x="100" y="384" text-anchor="middle" dominant-baseline="central">Face buttons</text>
+
+  <!-- Buttons below triggers, compact -->
+  <g class="c-coral"><rect x="52" y="391" width="84" height="20" rx="4" stroke-width="0.5"/><text class="ts" x="94" y="401" text-anchor="middle" dominant-baseline="central">A · B · X · Y</text></g>
+  <text class="ts" x="94" y="418" text-anchor="middle" dominant-baseline="central">GPIO 12 / 13 / 14 / 27</text>
+  <text class="ts" x="94" y="432" text-anchor="middle" dominant-baseline="central">(same wiring as D1)</text>
+
+  <!-- Simple lines from face buttons to GPIOs -->
+  <path d="M136 401 L200 401 L200 265 L250 265" fill="none" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah3)"/>
+  <path d="M200 265 L200 295 L250 295" fill="none" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah3)"/>
+  <path d="M200 295 L200 325 L250 325" fill="none" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah3)"/>
+  <path d="M200 325 L200 355 L250 355" fill="none" stroke="#993C1D" stroke-width="1.5" marker-end="url(#ah3)"/>
+
+  <!-- ── Joystick — RIGHT ── -->
+  <g class="c-teal">
+    <rect x="540" y="155" width="110" height="115" rx="8" stroke-width="0.5"/>
+    <text class="th" x="595" y="182" text-anchor="middle" dominant-baseline="central">KY-023</text>
+    <text class="ts" x="595" y="200" text-anchor="middle" dominant-baseline="central">Joystick</text>
+  </g>
+
+  <circle cx="540" cy="225" r="4" fill="#0F6E56"/>
+  <circle cx="540" cy="245" r="4" fill="#0F6E56"/>
+  <text class="ts" x="538" y="227" text-anchor="end" dominant-baseline="central">VRX</text>
+  <text class="ts" x="538" y="247" text-anchor="end" dominant-baseline="central">VRY</text>
+  <circle cx="595" cy="270" r="4" fill="#5F5E5A"/>
+  <circle cx="620" cy="270" r="4" fill="#378ADD"/>
+  <text class="ts" x="586" y="285" text-anchor="middle" dominant-baseline="central">GND</text>
+  <text class="ts" x="626" y="285" text-anchor="middle" dominant-baseline="central">VCC</text>
+
+  <!-- VRX → GPIO34 -->
+  <path d="M540 225 L505 225 L505 185 L430 185" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ah3)"/>
+  <!-- VRY → GPIO35 -->
+  <path d="M540 245 L510 245 L510 215 L430 215" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ah3)"/>
+  <!-- Joy GND → right GND pin -->
+  <path d="M595 270 L595 310 L430 310" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ah3)"/>
+  <!-- Joy VCC → right 3.3V pin -->
+  <path d="M620 270 L620 340 L430 340" fill="none" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#ah3)"/>
+
+  <!-- Axis mapping callout -->
+  <g class="c-blue">
+    <rect x="440" y="360" width="200" height="80" rx="6" stroke-width="0.5"/>
+    <text class="th" x="540" y="383" text-anchor="middle" dominant-baseline="central">BLE axis mapping</text>
+    <text class="ts" x="540" y="403" text-anchor="middle" dominant-baseline="central">LT (GPIO 32) → Z axis</text>
+    <text class="ts" x="540" y="421" text-anchor="middle" dominant-baseline="central">RT (GPIO 33) → RZ axis</text>
+  </g>
+
+  <!-- Note -->
+  <rect x="10" y="450" width="660" height="36" rx="5" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text class="ts" x="340" y="463" text-anchor="middle" dominant-baseline="central">Pot wiring: one end to 3.3V, other end to GND, wiper to GPIO. Trigger reads 0–3.3V (maps to BLE 0–32767).</text>
+  <text class="ts" x="340" y="479" text-anchor="middle" dominant-baseline="central">Set #define DIGITAL_TRIGGERS true to use push buttons instead of potentiometers.</text>
+</svg>
+</div>
+
+<script>
+function show(i){
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+}
+</script>
