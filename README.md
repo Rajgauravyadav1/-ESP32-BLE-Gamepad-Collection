@@ -284,8 +284,3 @@ Want to run ESP32 on battery?
 MIT License — free to use, modify, and distribute.
 
 ---
-
-## 🙏 Credits
-
-- [BleGamepad by lemmingDev](https://github.com/lemmingDev/ESP32-BLE-Gamepad) — the BLE HID library powering all sketches
-- ESP32 Arduino core by Espressif
